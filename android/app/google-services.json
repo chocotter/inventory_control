@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "241472306619",
+    "project_id": "inventory-control-d9f64",
+    "storage_bucket": "inventory-control-d9f64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:241472306619:android:5949d712253a24c161189e",
+        "android_client_info": {
+          "package_name": "com.chocotter.inventory_control"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "241472306619-nvni4j472tl636q9b7g8jn539otg425j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAhHAjx-xd4SFElR1dRA3br_cP3Ctm2Mc0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "241472306619-nvni4j472tl636q9b7g8jn539otg425j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
