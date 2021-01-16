@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:inventory_control/detail_page.dart';
 import 'package:inventory_control/main_model.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -71,7 +72,10 @@ class MainPage extends StatelessWidget {
                               await Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => DetailPage(model,invest: invest,),
+                                  builder: (context) => DetailPage(
+                                    model,
+                                    invest: invest,
+                                  ),
                                   fullscreenDialog: true,
                                 ),
                               );
@@ -90,22 +94,75 @@ class MainPage extends StatelessWidget {
         }),
         floatingActionButton:
         Consumer<MainModel>(builder: (context, model, child) {
-          return FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => DetailPage(model),
-                  fullscreenDialog: true,
+          return Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Visibility(
+                child: RaisedButton(
+                  child: const Text('Search'),
+                  onPressed: () {},
+                  highlightElevation: 16,
+                  highlightColor: Colors.blue,
+                  onHighlightChanged: (value) {},
                 ),
-              );
-            },
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
+                visible: false,
+              ),
+              Visibility(
+                child: RaisedButton(
+                  child: const Text('Search'),
+                  onPressed: () {},
+                  highlightElevation: 16,
+                  highlightColor: Colors.blue,
+                  onHighlightChanged: (value) {},
+                ),
+                visible: false,
+              ),
+              Visibility(
+                child: RaisedButton(
+                  child: const Text('Search'),
+                  onPressed: () {},
+                  highlightElevation: 16,
+                  highlightColor: Colors.blue,
+                  onHighlightChanged: (value) {},
+                ),
+                visible: false,
+              ),
+              RaisedButton(
+                child: const Text('Search'),
+                color: Colors.blue,
+                textColor: Colors.white,
+                shape: const StadiumBorder(),
+                onPressed: () async {
+                  _launchUrl();
+                },
+              ),
+              FloatingActionButton(
+                onPressed: () async {
+                  await Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailPage(model),
+                      fullscreenDialog: true,
+                    ),
+                  );
+                },
+                tooltip: 'Increment',
+                child: Icon(Icons.add),
+              ),
+            ],
           );
         }),
       ),
     );
+  }
+
+  void _launchUrl() async {
+    const url = "https://www.google.com/search?q=レシピ%20すいか%20らいち%20";
+    if (await canLaunch(url)) {
+      await launch(url);
+    } else {
+      throw 'Could not Launch $url';
+    }
   }
 }
 
@@ -113,7 +170,6 @@ class CheckboxListTileForm extends StatefulWidget {
   @override
   _CheckboxListTileState createState() => _CheckboxListTileState();
 }
-
 class _CheckboxListTileState extends State<CheckboxListTileForm> {
   var _checkBox1 = false;
 

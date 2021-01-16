@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:inventory_control/invest.dart';
 
 class MainModel extends ChangeNotifier {
   List<Invest> investList = [];
   String detailText = '';
+  int stockText = 0;
+
 
   /*
   Future getInvestList() async {
@@ -33,6 +37,10 @@ class MainModel extends ChangeNotifier {
     await collection.add({
       'title': detailText,
       'createdAt': Timestamp.now(),
+//      'deadline': deadlineText,
+
+
+
     });
   }
 
@@ -44,10 +52,10 @@ class MainModel extends ChangeNotifier {
   Future update(Invest invest) async {
     final document = Firestore.instance.collection('investList').document(invest.documentID);
     await document.updateData(
-      {
-        'title': detailText,
-        'updateAt': Timestamp.now(),
-      }
+        {
+          'title': detailText,
+          'updateAt': Timestamp.now(),
+        }
     );
   }
 }
