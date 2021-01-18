@@ -15,11 +15,13 @@ class DetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isUpdate = invest != null;
     final textEditingControllerTitle = TextEditingController();
-    final textEditingControllerCreatedAt = TextEditingController();
+    final textEditingControllerStock = TextEditingController();
+    final textEditingControllerLow = TextEditingController();
 
     if (isUpdate) {
       textEditingControllerTitle.text = invest.title;
-      textEditingControllerCreatedAt.text = invest.createdAt.toString();
+      textEditingControllerStock.text = invest.stock;
+      textEditingControllerLow.text = invest.low;
     }
 
     return ChangeNotifierProvider<MainModel>.value(
@@ -33,6 +35,8 @@ class DetailPage extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               _titleArea(model, textEditingControllerTitle),
+              _stockArea(model, textEditingControllerStock),
+              _lowArea(model, textEditingControllerLow),
 //              _stockArea(model, textEditingControllerCreatedAt),
 //              _deadLineArea(),
               RaisedButton(
@@ -69,7 +73,7 @@ Widget _titleArea(
             labelText: "品名",
           ),
           onChanged: (text) {
-            model.detailText = text;
+            model.titleText = text;
           },
         ),
       ],
@@ -79,7 +83,7 @@ Widget _titleArea(
 
 Widget _stockArea(
     MainModel model,
-    TextEditingController textEditingControllerCreatedAt,
+    TextEditingController textEditingControllerStock,
     ) {
   return Container(
     child: Row(
@@ -88,20 +92,49 @@ Widget _stockArea(
         Container(
           width: 350,
           child: TextField(
-            controller: textEditingControllerCreatedAt,
+            controller: textEditingControllerStock,
             decoration: InputDecoration(
-              labelText: '期限',
+              labelText: '在庫数',
             ),
             onChanged: (text) {
-              model.detailText = text;
+              model.stockText = text;
             },
           ),
         ),
+
+      ],
+    ),
+  );
+}
+
+Widget _lowArea(
+    MainModel model,
+    TextEditingController textEditingControllerLow,
+    ) {
+  return Container(
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Container(
+          width: 350,
+          child: TextField(
+            controller: textEditingControllerLow,
+            decoration: InputDecoration(
+              labelText: '最安値',
+            ),
+            onChanged: (text) {
+              model.lowText = text;
+            },
+          ),
+        ),
+        /*
         IconButton(
             icon: Icon(Icons.date_range),
             onPressed: () async {
               await ChangeForm();
             }),
+
+         */
       ],
     ),
   );

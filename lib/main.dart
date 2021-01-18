@@ -36,97 +36,90 @@ class MainPage extends StatelessWidget {
             children: investList
                 .map(
                   (invest) => ListTile(
-                title: Text(invest.title),
-                leading: Icon(Icons.account_circle),
-                trailing: CheckboxListTileForm(),
-                onLongPress: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('削除しますか？'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('OK'),
-                            onPressed: () async {
-                              await Navigator.of(context).pop();
-                              //削除
-                              await model.delete(invest);
-                            },
-                          ),
-                        ],
+//                leading: Icon(Icons.account_circle),
+                    leading: Text(invest.title,
+                        style: TextStyle(fontSize: 25),
+                        textAlign: TextAlign.center),
+
+                    title: Text('在庫：' + invest.stock + '個',
+                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
+                    subtitle: Text('最安値：' + invest.low + '円',
+                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
+
+                    trailing: CheckboxListTileForm(),
+                    onLongPress: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('削除しますか？'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('OK'),
+                                onPressed: () async {
+                                  await Navigator.of(context).pop();
+                                  //削除
+                                  await model.delete(invest);
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-                onTap: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('更新しますか？'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('OK'),
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailPage(
-                                    model,
-                                    invest: invest,
-                                  ),
-                                  fullscreenDialog: true,
-                                ),
-                              );
-                              await Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
+                    onTap: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('更新しますか？'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('OK'),
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailPage(
+                                        model,
+                                        invest: invest,
+                                      ),
+                                      fullscreenDialog: true,
+                                    ),
+                                  );
+                                  await Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
-            )
+                  ),
+                )
                 .toList(),
           );
         }),
         floatingActionButton:
-        Consumer<MainModel>(builder: (context, model, child) {
+            Consumer<MainModel>(builder: (context, model, child) {
           return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              // フッターボタンの表示位置調整が面倒なので、ごみボタンを追加し、非表示でサイズ調整　START
               Visibility(
-                child: RaisedButton(
-                  child: const Text('Search'),
-                  onPressed: () {},
-                  highlightElevation: 16,
-                  highlightColor: Colors.blue,
-                  onHighlightChanged: (value) {},
-                ),
+                child: RaisedButton(),
                 visible: false,
               ),
               Visibility(
-                child: RaisedButton(
-                  child: const Text('Search'),
-                  onPressed: () {},
-                  highlightElevation: 16,
-                  highlightColor: Colors.blue,
-                  onHighlightChanged: (value) {},
-                ),
+                child: RaisedButton(),
                 visible: false,
               ),
               Visibility(
-                child: RaisedButton(
-                  child: const Text('Search'),
-                  onPressed: () {},
-                  highlightElevation: 16,
-                  highlightColor: Colors.blue,
-                  onHighlightChanged: (value) {},
-                ),
+                child: RaisedButton(),
                 visible: false,
               ),
+              // フッターボタンの表示位置調整が面倒なので、ごみボタンを追加し、非表示でサイズ調整　END
+
               RaisedButton(
                 child: const Text('Search'),
                 color: Colors.blue,
@@ -136,6 +129,7 @@ class MainPage extends StatelessWidget {
                   _launchUrl();
                 },
               ),
+
               FloatingActionButton(
                 onPressed: () async {
                   await Navigator.push(
@@ -170,22 +164,23 @@ class CheckboxListTileForm extends StatefulWidget {
   @override
   _CheckboxListTileState createState() => _CheckboxListTileState();
 }
+
 class _CheckboxListTileState extends State<CheckboxListTileForm> {
   var _checkBox1 = false;
 
   Widget build(BuildContext context) {
     return Container(
         child: Column(
-          children: <Widget>[
-            Checkbox(
-              value: _checkBox1,
-              onChanged: (bool value) {
-                setState(() {
-                  _checkBox1 = value;
-                });
-              },
-            ),
-          ],
-        ));
+      children: <Widget>[
+        Checkbox(
+          value: _checkBox1,
+          onChanged: (bool value) {
+            setState(() {
+              _checkBox1 = value;
+            });
+          },
+        ),
+      ],
+    ));
   }
 }

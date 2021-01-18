@@ -6,9 +6,9 @@ import 'package:inventory_control/invest.dart';
 
 class MainModel extends ChangeNotifier {
   List<Invest> investList = [];
-  String detailText = '';
-  int stockText = 0;
-
+  String titleText = '';
+  String stockText = '';
+  String lowText = '';
 
   /*
   Future getInvestList() async {
@@ -35,12 +35,10 @@ class MainModel extends ChangeNotifier {
   Future add() async {
     final collection = FirebaseFirestore.instance.collection('investList');
     await collection.add({
-      'title': detailText,
+      'title': titleText,
+      'stock': stockText,
+      'low': lowText,
       'createdAt': Timestamp.now(),
-//      'deadline': deadlineText,
-
-
-
     });
   }
 
@@ -53,7 +51,9 @@ class MainModel extends ChangeNotifier {
     final document = Firestore.instance.collection('investList').document(invest.documentID);
     await document.updateData(
         {
-          'title': detailText,
+          'title': titleText,
+          'stock': stockText,
+          'low': lowText,
           'updateAt': Timestamp.now(),
         }
     );
