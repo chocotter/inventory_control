@@ -155,7 +155,7 @@ Widget _deadLineArea() {
                   // 3.1.1行目
                   margin: const EdgeInsets.only(bottom: 4.0),
                   child: Text(
-                    "Neko is So cute.",
+                    "Neko is So cute..",
                     style:
                     TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
