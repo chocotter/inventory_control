@@ -1,13 +1,12 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory_control/detail_page.dart';
-import 'package:inventory_control/main_model.dart';
-import 'package:provider/provider.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:inventory_control/investlist.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  // 最初に表示するWidget
   runApp(MyApp());
 }
 
@@ -15,172 +14,136 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // 右上に表示される"debug"ラベルを消す
+      debugShowCheckedModeBanner: false,
       title: 'Chocotter Invest Control',
-      home: MainPage(),
+      theme: ThemeData(
+        // テーマカラー
+        primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+      ),
+      home: LoginPage(),
     );
   }
 }
 
-class MainPage extends StatelessWidget {
+// ログイン画面用Widget
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  // メッセージ表示用
+  String infoText = '';
+
+  // 入力したメールアドレス・パスワード
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<MainModel>(
-      create: (_) => MainModel()..getInvestListRealtime(),
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('在庫管理アプリ'),
-        ),
-        body: Consumer<MainModel>(builder: (context, model, child) {
-          final investList = model.investList;
-          return ListView(
-            children: investList
-                .map(
-                  (invest) => ListTile(
-//                leading: Icon(Icons.account_circle),
-                    leading: Text(invest.title,
-                        style: TextStyle(fontSize: 25),
-                        textAlign: TextAlign.center),
-
-                    title: Text('在庫：' + invest.stock + '個',
-                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-                    subtitle: Text('最安値：' + invest.low + '円',
-                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-
-                    trailing: CheckboxListTileForm(),
-                    onLongPress: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('削除しますか？'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('OK'),
-                                onPressed: () async {
-                                  await Navigator.of(context).pop();
-                                  //削除
-                                  await model.delete(invest);
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                    onTap: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('更新しますか？'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('OK'),
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailPage(
-                                        model,
-                                        invest: invest,
-                                      ),
-                                      fullscreenDialog: true,
-                                    ),
-                                  );
-                                  await Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-                          );
-                        },
-                      );
-                    },
-                  ),
-                )
-                .toList(),
-          );
-        }),
-        floatingActionButton:
-            Consumer<MainModel>(builder: (context, model, child) {
-          return Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              // フッターボタンの表示位置調整が面倒なので、ごみボタンを追加し、非表示でサイズ調整　START
-              Visibility(
-                child: RaisedButton(),
-                visible: false,
-              ),
-              Visibility(
-                child: RaisedButton(),
-                visible: false,
-              ),
-              Visibility(
-                child: RaisedButton(),
-                visible: false,
-              ),
-              // フッターボタンの表示位置調整が面倒なので、ごみボタンを追加し、非表示でサイズ調整　END
-
-              RaisedButton(
-                child: const Text('Search'),
-                color: Colors.blue,
-                textColor: Colors.white,
-                shape: const StadiumBorder(),
-                onPressed: () async {
-                  _launchUrl();
+    return Scaffold(
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // メールアドレス入力
+              TextFormField(
+                decoration: InputDecoration(labelText: 'メールアドレス'),
+                onChanged: (String value) {
+                  setState(() {
+                    email = value;
+                  });
                 },
               ),
-
-              FloatingActionButton(
-                onPressed: () async {
-                  await Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => DetailPage(model),
-                      fullscreenDialog: true,
-                    ),
-                  );
+              // パスワード入力
+              TextFormField(
+                decoration: InputDecoration(labelText: 'パスワード'),
+                obscureText: true,
+                onChanged: (String value) {
+                  setState(() {
+                    password = value;
+                  });
                 },
-                tooltip: 'Increment',
-                child: Icon(Icons.add),
+              ),
+              Container(
+                padding: EdgeInsets.all(8),
+                // メッセージ表示
+                child: Text(infoText),
+              ),
+              Container(
+                width: double.infinity,
+                // ユーザー登録ボタン
+                child: RaisedButton(
+                  color: Colors.blue,
+                  textColor: Colors.white,
+                  child: Text('ユーザー登録'),
+                  onPressed: () async {
+                    try {
+                      // メール/パスワードでユーザー登録
+                      final FirebaseAuth auth = FirebaseAuth.instance;
+                      var result = await auth.createUserWithEmailAndPassword(
+                        email: email,
+                        password: password,
+                      );
+                      var user = result.user;
+
+                      // ユーザー登録に成功した場合
+                      // チャット画面に遷移＋ログイン画面を破棄
+                      await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) {
+                          return Investlist(user);
+                        }),
+                      );
+                    } catch (e) {
+                      // ユーザー登録に失敗した場合
+                      setState(() {
+                        infoText = "登録に失敗しました：${e.message}";
+                      });
+                    }
+                  },
+                ),
+              ),
+              Container(
+                width: double.infinity,
+                // ログイン登録ボタン
+                child: OutlineButton(
+                  textColor: Colors.blue,
+                  child: Text('ログイン'),
+                  onPressed: () async {
+                    try {
+                      // メール/パスワードでログイン
+                      final FirebaseAuth auth = FirebaseAuth.instance;
+                      var result = await auth.signInWithEmailAndPassword(
+                        email: email,
+                        password: password,
+                      );
+                      var user = result.user;
+
+                      // ログインに成功した場合
+                      // チャット画面に遷移＋ログイン画面を破棄
+                      await Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) {
+                          // ユーザー情報を渡す
+                          return Investlist(user);
+                        }),
+                      );
+                    } catch (e) {
+                      // ログインに失敗した場合
+                      setState(() {
+                        infoText = "ログインに失敗しました：${e.message}";
+                      });
+                    }
+                  },
+                ),
               ),
             ],
-          );
-        }),
+          ),
+        ),
       ),
     );
-  }
-
-  void _launchUrl() async {
-    const url = "https://www.google.com/search?q=レシピ%20すいか%20らいち%20";
-    if (await canLaunch(url)) {
-      await launch(url);
-    } else {
-      throw 'Could not Launch $url';
-    }
-  }
-}
-
-class CheckboxListTileForm extends StatefulWidget {
-  @override
-  _CheckboxListTileState createState() => _CheckboxListTileState();
-}
-
-class _CheckboxListTileState extends State<CheckboxListTileForm> {
-  var _checkBox1 = false;
-
-  Widget build(BuildContext context) {
-    return Container(
-        child: Column(
-      children: <Widget>[
-        Checkbox(
-          value: _checkBox1,
-          onChanged: (bool value) {
-            setState(() {
-              _checkBox1 = value;
-            });
-          },
-        ),
-      ],
-    ));
   }
 }
