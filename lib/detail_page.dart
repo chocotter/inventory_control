@@ -1,7 +1,6 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:inventory_control/invest.dart';
+import 'package:inventory_control/main.dart';
 import 'package:inventory_control/main_model.dart';
 import 'package:provider/provider.dart';
 
@@ -13,6 +12,10 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ユーザー情報を受け取る
+    final UserState userState = Provider.of<UserState>(context);
+    var user = userState.user;
+
     final bool isUpdate = invest != null;
     final textEditingControllerTitle = TextEditingController();
     final textEditingControllerStock = TextEditingController();
@@ -69,7 +72,7 @@ class DetailPage extends StatelessWidget {
                       if (isUpdate) {
                         await model.update(invest);
                       } else {
-                        await model.add();
+                        await model.add(user.email);
                       }
                       Navigator.pop(context);
                     },
@@ -98,7 +101,8 @@ class DetailPage extends StatelessWidget {
                     if (isUpdate) {
                       await model.update(invest);
                     } else {
-                      await model.add();
+                      model.accountText = user.email;
+                      await model.add(model.accountText);
                     }
                     Navigator.pop(context);
                   },

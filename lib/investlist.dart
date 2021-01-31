@@ -1,27 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_control/checklist_model.dart';
 import 'package:inventory_control/detail_page.dart';
+import 'package:inventory_control/main.dart';
 import 'package:inventory_control/main_model.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+// 更新可能なデータ
+class recipeState extends ChangeNotifier {
+  var recipe;
+
+  void setrecipe(var newrecipe) {
+    recipe = newrecipe;
+    notifyListeners();
+  }
+}
+
 // ignore: must_be_immutable
 class Investlist extends StatelessWidget {
-  Investlist(this.user);
-  // ユーザー情報
-  var user;
-
   @override
   Widget build(BuildContext context) {
+    // ユーザー情報を受け取る
+    final UserState userState = Provider.of<UserState>(context);
+    var user = userState.user;
+
     return ChangeNotifierProvider<MainModel>(
-      create: (_) => MainModel()..getInvestListRealtime(),
+      create: (_) => MainModel()..getInvestListRealtime(user.email),
       child: Scaffold(
         appBar: AppBar(
           title: Text('在庫管理アプリ'),
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
           final investList = model.investList;
-
           Map<String, String> recipeSearchMap;
 
           return ListView(
@@ -149,7 +159,6 @@ class Investlist extends StatelessWidget {
                       ),
                     );
                   },
-                  tooltip: 'Increment',
                   child: Icon(Icons.add),
                 ),
               ),

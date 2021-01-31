@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inventory_control/investlist.dart';
+import 'package:provider/provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -10,10 +11,23 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
+// 更新可能なデータ
+class UserState extends ChangeNotifier {
+  var user;
+  void setUser(var newUser) {
+    user = newUser;
+    notifyListeners();
+  }
+}
+
 class MyApp extends StatelessWidget {
+  // ユーザーの情報を管理するデータ
+  final UserState userState = UserState();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return ChangeNotifierProvider<UserState>.value(
+    value: userState,
+      child: MaterialApp(
       // 右上に表示される"debug"ラベルを消す
       debugShowCheckedModeBanner: false,
       title: 'Chocotter Invest Control',
@@ -23,6 +37,7 @@ class MyApp extends StatelessWidget {
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
       home: LoginPage(),
+    ),
     );
   }
 }
@@ -36,13 +51,14 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // メッセージ表示用
   String infoText = '';
-
   // 入力したメールアドレス・パスワード
   String email = '';
   String password = '';
 
   @override
   Widget build(BuildContext context) {
+    // ユーザー情報を受け取る
+    final UserState userState = Provider.of<UserState>(context);
     return Scaffold(
       body: Center(
         child: Container(
@@ -90,12 +106,14 @@ class _LoginPageState extends State<LoginPage> {
                         password: password,
                       );
                       var user = result.user;
+                      // ユーザー情報を更新
+                      userState.setUser(user);
 
                       // ユーザー登録に成功した場合
                       // チャット画面に遷移＋ログイン画面を破棄
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) {
-                          return Investlist(user);
+                          return Investlist();
                         }),
                       );
                     } catch (e) {
@@ -122,13 +140,14 @@ class _LoginPageState extends State<LoginPage> {
                         password: password,
                       );
                       var user = result.user;
-
+                      // ユーザー情報を更新
+                      userState.setUser(user);
                       // ログインに成功した場合
                       // チャット画面に遷移＋ログイン画面を破棄
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) {
                           // ユーザー情報を渡す
-                          return Investlist(user);
+                          return Investlist();
                         }),
                       );
                     } catch (e) {
