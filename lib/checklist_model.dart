@@ -1,15 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:inventory_control/invest.dart';
 import 'package:inventory_control/main_model.dart';
 
+// ignore: must_be_immutable
 class CheckboxListTileForm extends StatefulWidget {
-  CheckboxListTileForm(BuildContext context, MainModel model);
+  MainModel model;
+  Invest invest;
+
+  CheckboxListTileForm(this.model, {this.invest});
 
   @override
-  _CheckboxListTileState createState() => _CheckboxListTileState();
+  _CheckboxListTileState createState() =>
+      _CheckboxListTileState(this.model, this.invest);
 }
 
 class _CheckboxListTileState extends State<CheckboxListTileForm> {
+  MainModel model;
+  Invest invest;
   bool _checkBox = false;
+
+  _CheckboxListTileState(this.model, this.invest);
 
   Widget build(BuildContext context) {
     return Container(
@@ -21,6 +31,7 @@ class _CheckboxListTileState extends State<CheckboxListTileForm> {
             setState(() {
               _checkBox = value;
             });
+            model.updateSearchFg(invest, _checkBox);
           },
         ),
       ],

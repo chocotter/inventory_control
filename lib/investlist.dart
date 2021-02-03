@@ -1,20 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:inventory_control/checklist_model.dart';
 import 'package:inventory_control/detail_page.dart';
+import 'package:inventory_control/invest.dart';
 import 'package:inventory_control/main.dart';
 import 'package:inventory_control/main_model.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
-
-// 更新可能なデータ
-class recipeState extends ChangeNotifier {
-  var recipe;
-
-  void setrecipe(var newrecipe) {
-    recipe = newrecipe;
-    notifyListeners();
-  }
-}
 
 // ignore: must_be_immutable
 class Investlist extends StatelessWidget {
@@ -32,7 +23,6 @@ class Investlist extends StatelessWidget {
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
           final investList = model.investList;
-          Map<String, String> recipeSearchMap;
 
           return ListView(
             children: investList
@@ -45,9 +35,11 @@ class Investlist extends StatelessWidget {
                         style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
                     subtitle: Text('最安値：' + invest.low + '円',
                         style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-
                     // チェックボックス
-                    trailing: CheckboxListTileForm(context, model),
+                    trailing: CheckboxListTileForm(
+                      model,
+                      invest: invest,
+                    ),
 
                     // タップ、ロングプレスのアクション
                     onLongPress: () async {
@@ -129,7 +121,7 @@ class Investlist extends StatelessWidget {
                     textColor: Colors.white,
                     shape: const StadiumBorder(),
                     onPressed: () async {
-                      _launchUrl();
+                      _launchUrl(user.email,model);
                     },
                   ),
                 ),
@@ -169,7 +161,9 @@ class Investlist extends StatelessWidget {
     );
   }
 
-  void _launchUrl() async {
+  void _launchUrl(String email,MainModel model) async {
+    List<Invest> investList2 = [];
+    model.getInvestList(email);
     const url = "https://www.google.com/search?q=レシピ%20すいか%20らいち%20";
     //   const url = "https://www.google.com/search?q=レシピ";
     //   print('investList.length:'+ model.investList.length.toString());
@@ -180,4 +174,5 @@ class Investlist extends StatelessWidget {
       throw 'Could not Launch $url';
     }
   }
+
 }
