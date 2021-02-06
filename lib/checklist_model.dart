@@ -7,7 +7,7 @@ class CheckboxListTileForm extends StatefulWidget {
   MainModel model;
   Invest invest;
 
-  CheckboxListTileForm(this.model, {this.invest});
+  CheckboxListTileForm(this.model, this.invest);
 
   @override
   _CheckboxListTileState createState() =>

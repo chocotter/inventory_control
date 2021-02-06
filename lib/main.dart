@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:inventory_control/invest.dart';
 import 'package:inventory_control/investlist.dart';
+import 'package:inventory_control/main_model.dart';
 import 'package:provider/provider.dart';
 
 Future<void> main() async {
@@ -23,6 +26,7 @@ class UserState extends ChangeNotifier {
 class MyApp extends StatelessWidget {
   // ユーザーの情報を管理するデータ
   final UserState userState = UserState();
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UserState>.value(
@@ -142,6 +146,7 @@ class _LoginPageState extends State<LoginPage> {
                       var user = result.user;
                       // ユーザー情報を更新
                       userState.setUser(user);
+
                       // ログインに成功した場合
                       // チャット画面に遷移＋ログイン画面を破棄
                       await Navigator.of(context).pushReplacement(
@@ -166,3 +171,4 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
+
