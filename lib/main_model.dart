@@ -40,14 +40,14 @@ class MainModel extends ChangeNotifier {
         .delete();
   }
 
-  Future update(Invest invest) async {
+  Future update(MainModel model, Invest invest) async {
     final document = Firestore.instance
         .collection(invest.account)
         .document(invest.documentID);
     await document.updateData({
-      'title': titleText,
-      'stock': stockText,
-      'low': lowText,
+      'title': model.titleText,
+      'stock': model.stockText,
+      'low': model.lowText,
       'updateAt': Timestamp.now(),
     });
   }

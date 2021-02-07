@@ -4,8 +4,8 @@ import 'package:inventory_control/main_model.dart';
 
 // ignore: must_be_immutable
 class CheckboxListTileForm extends StatefulWidget {
-  MainModel model;
-  Invest invest;
+  final MainModel model;
+  final Invest invest;
 
   CheckboxListTileForm(this.model, this.invest);
 
@@ -15,8 +15,8 @@ class CheckboxListTileForm extends StatefulWidget {
 }
 
 class _CheckboxListTileState extends State<CheckboxListTileForm> {
-  MainModel model;
-  Invest invest;
+  final MainModel model;
+  final Invest invest;
   bool _checkBox = false;
 
   _CheckboxListTileState(this.model, this.invest);

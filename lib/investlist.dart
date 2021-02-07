@@ -33,75 +33,75 @@ class Investlist extends StatelessWidget {
             children: investList
                 .map(
                   (invest) => ListTile(
-                leading: Text(invest.title,
-                    style: TextStyle(fontSize: 25),
-                    textAlign: TextAlign.center),
-                title: Text('在庫：' + invest.stock + '個',
-                    style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-                subtitle: Text('最安値：' + invest.low + '円',
-                    style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-                // チェックボックス
-                trailing: CheckboxListTileForm(
-                  model,
-                  invest,
-                ),
+                    leading: Text(invest.title,
+                        style: TextStyle(fontSize: 25),
+                        textAlign: TextAlign.center),
+                    title: Text('在庫：' + invest.stock + '個',
+                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
+                    subtitle: Text('最安値：' + invest.low + '円',
+                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
+                    // チェックボックス
+                    trailing: CheckboxListTileForm(
+                      model,
+                      invest,
+                    ),
 
-                // タップ、ロングプレスのアクション
-                onLongPress: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('削除しますか？'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('OK'),
-                            onPressed: () async {
-                              await Navigator.of(context).pop();
-                              //削除
-                              await model.delete(invest);
-                            },
-                          ),
-                        ],
+                    // タップ、ロングプレスのアクション
+                    onLongPress: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('削除しますか？'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('OK'),
+                                onPressed: () async {
+                                  await Navigator.of(context).pop();
+                                  //削除
+                                  await model.delete(invest);
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-                onTap: () async {
-                  await showDialog(
-                    context: context,
-                    builder: (BuildContext context) {
-                      return AlertDialog(
-                        title: Text('更新しますか？'),
-                        actions: <Widget>[
-                          FlatButton(
-                            child: Text('OK'),
-                            onPressed: () async {
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => DetailPage(
-                                    model,
-                                    invest: invest,
-                                  ),
-                                  fullscreenDialog: true,
-                                ),
-                              );
-                              await Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
+                    onTap: () async {
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('更新しますか？'),
+                            actions: <Widget>[
+                              FlatButton(
+                                child: Text('OK'),
+                                onPressed: () async {
+                                  await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => DetailPage(
+                                        model,
+                                        invest: invest,
+                                      ),
+                                      fullscreenDialog: true,
+                                    ),
+                                  );
+                                  await Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+                          );
+                        },
                       );
                     },
-                  );
-                },
-              ),
-            )
+                  ),
+                )
                 .toList(),
           );
         }),
         floatingActionButton:
-        Consumer<MainModel>(builder: (context, model, child) {
+            Consumer<MainModel>(builder: (context, model, child) {
           return Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
@@ -110,8 +110,8 @@ class Investlist extends StatelessWidget {
                 flex: 4,
                 child: Visibility(
                   child: RaisedButton(
-                    // サイズ調整用
-                  ),
+                      // サイズ調整用
+                      ),
                   visible: false,
                 ),
               ),
@@ -137,8 +137,8 @@ class Investlist extends StatelessWidget {
                 flex: 1,
                 child: Visibility(
                   child: RaisedButton(
-                    // サイズ調整用
-                  ),
+                      // サイズ調整用
+                      ),
                   visible: false,
                 ),
               ),
@@ -178,14 +178,13 @@ class Investlist extends StatelessWidget {
   }
 
   Future<String> selectSearch(String collectionName) async {
-    QuerySnapshot docSnapshot =
-    await Firestore.instance.collection(collectionName).getDocuments();
-
     String urlList = "https://www.google.com/search?q=レシピ%20";
-
+    QuerySnapshot docSnapshot =
+        await Firestore.instance.collection(collectionName).getDocuments();
     for (var i = 0; i < docSnapshot.documents.length; i++) {
       if (docSnapshot.documents[i].data()['searchFg'] == true) {
-        urlList = "${urlList}" + docSnapshot.documents[i].data()['title'] + "%20";
+        urlList =
+            "${urlList}" + docSnapshot.documents[i].data()['title'] + "%20";
       }
     }
     print('URL:' + urlList);
@@ -199,7 +198,6 @@ class Investlist extends StatelessWidget {
     Map<String, bool> data = {
       "searchFg": false,
     };
-
     for (var i = 0; i < document.documents.length; i++) {
       await Firestore.instance
           .collection(collectionName)
@@ -207,5 +205,4 @@ class Investlist extends StatelessWidget {
           .updateData(data);
     }
   }
-
 }

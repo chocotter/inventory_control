@@ -70,7 +70,7 @@ class DetailPage extends StatelessWidget {
                     child: Text(isUpdate ? '更新' : '追加'),
                     onPressed: () async {
                       if (isUpdate) {
-                        await model.update(invest);
+                        await model.update(model,invest);
                       } else {
                         await model.add(user.email);
                       }
@@ -99,7 +99,7 @@ class DetailPage extends StatelessWidget {
                 child: FloatingActionButton(
                   onPressed: () async {
                     if (isUpdate) {
-                      await model.update(invest);
+                      await model.update(model,invest);
                     } else {
                       model.accountText = user.email;
                       await model.add(model.accountText);
@@ -134,7 +134,7 @@ Widget _titleArea(
             model.titleText = text;
           },
         ),
-      ],
+      ]
     ),
   );
 }

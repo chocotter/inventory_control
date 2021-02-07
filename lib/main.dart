@@ -17,6 +17,7 @@ Future<void> main() async {
 // 更新可能なデータ
 class UserState extends ChangeNotifier {
   var user;
+
   void setUser(var newUser) {
     user = newUser;
     notifyListeners();
@@ -30,18 +31,18 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<UserState>.value(
-    value: userState,
+      value: userState,
       child: MaterialApp(
-      // 右上に表示される"debug"ラベルを消す
-      debugShowCheckedModeBanner: false,
-      title: 'Chocotter Invest Control',
-      theme: ThemeData(
-        // テーマカラー
-        primarySwatch: Colors.blue,
-        visualDensity: VisualDensity.adaptivePlatformDensity,
+        // 右上に表示される"debug"ラベルを消す
+        debugShowCheckedModeBanner: false,
+        title: 'Chocotter Invest Control',
+        theme: ThemeData(
+          // テーマカラー
+          primarySwatch: Colors.blue,
+          visualDensity: VisualDensity.adaptivePlatformDensity,
+        ),
+        home: LoginPage(),
       ),
-      home: LoginPage(),
-    ),
     );
   }
 }
@@ -55,6 +56,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   // メッセージ表示用
   String infoText = '';
+
   // 入力したメールアドレス・パスワード
   String email = '';
   String password = '';
@@ -171,4 +173,3 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 }
-
