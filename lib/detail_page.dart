@@ -25,6 +25,11 @@ class DetailPage extends StatelessWidget {
       textEditingControllerTitle.text = invest.title;
       textEditingControllerStock.text = invest.stock;
       textEditingControllerLow.text = invest.low;
+
+      model.titleText = invest.title;
+      model.stockText = invest.stock;
+      model.lowText = invest.low;
+
     }
 
     return ChangeNotifierProvider<MainModel>.value(
