@@ -8,7 +8,6 @@ class Invest {
     this.stock = doc.data()['stock'];
     this.low = doc.data()['low'];
     this.createdAt = doc.data()['createdAt'].toDate();
-    this.searchFg = doc.data()['searchFg'];
   }
 
   String account; //アカウント
@@ -17,5 +16,4 @@ class Invest {
   String low; //最安値
   DateTime createdAt; // データ作成日
   String documentID;
-  bool searchFg;
 }

@@ -4,6 +4,7 @@ import 'package:inventory_control/invest.dart';
 
 class MainModel extends ChangeNotifier {
   List<Invest> investList = [];
+  List<String> selectedItemList = [];
   String accountText = '';
   String titleText = '';
   String stockText = '';
@@ -29,7 +30,6 @@ class MainModel extends ChangeNotifier {
       'stock': stockText,
       'low': lowText,
       'createdAt': Timestamp.now(),
-      'searchFg': false,
     });
   }
 
@@ -38,6 +38,7 @@ class MainModel extends ChangeNotifier {
         .collection(invest.account)
         .doc(invest.documentID)
         .delete();
+    selectedItemList.remove(invest.title);
   }
 
   Future update(MainModel model, Invest invest) async {
@@ -53,11 +54,10 @@ class MainModel extends ChangeNotifier {
   }
 
   Future updateSearchFg(Invest invest, bool searchFlg) async {
-    final document = FirebaseFirestore.instance
-        .collection(invest.account)
-        .doc(invest.documentID);
-    await document.update({
-      'searchFg': searchFlg,
-    });
+    if (searchFlg) {
+      selectedItemList.add(invest.title);
+    } else {
+      selectedItemList.remove(invest.title);
+    }
   }
 }
