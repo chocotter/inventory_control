@@ -28,9 +28,8 @@ class Investlist extends StatelessWidget {
           title: Text('在庫管理アプリ'),
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
-          final investList = model.investList;
           return ListView(
-            children: investList
+            children: model.investList
                 .map(
                   (invest) => ListTile(
                     leading: Text(invest.title,
@@ -57,7 +56,7 @@ class Investlist extends StatelessWidget {
                               FlatButton(
                                 child: Text('OK'),
                                 onPressed: () async {
-                                  await Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
                                   //削除
                                   await model.delete(invest);
                                 },
@@ -87,7 +86,7 @@ class Investlist extends StatelessWidget {
                                       fullscreenDialog: true,
                                     ),
                                   );
-                                  await Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
                                 },
                               ),
                             ],
@@ -110,8 +109,9 @@ class Investlist extends StatelessWidget {
                 flex: 4,
                 child: Visibility(
                   child: RaisedButton(
-                      // サイズ調整用
-                      ),
+                    onPressed: () {},
+                    // サイズ調整用
+                  ),
                   visible: false,
                 ),
               ),
@@ -126,7 +126,7 @@ class Investlist extends StatelessWidget {
                     textColor: Colors.white,
                     shape: const StadiumBorder(),
                     onPressed: () async {
-                      await _launchUrl(user.email, model);
+                      _launchUrl(user.email, model);
                     },
                   ),
                 ),
@@ -137,8 +137,9 @@ class Investlist extends StatelessWidget {
                 flex: 1,
                 child: Visibility(
                   child: RaisedButton(
-                      // サイズ調整用
-                      ),
+                    onPressed: () {},
+                    // サイズ調整用
+                  ),
                   visible: false,
                 ),
               ),
@@ -180,11 +181,10 @@ class Investlist extends StatelessWidget {
   Future<String> selectSearch(String collectionName) async {
     String urlList = "https://www.google.com/search?q=レシピ%20";
     QuerySnapshot docSnapshot =
-        await Firestore.instance.collection(collectionName).getDocuments();
-    for (var i = 0; i < docSnapshot.documents.length; i++) {
-      if (docSnapshot.documents[i].data()['searchFg'] == true) {
-        urlList =
-            "${urlList}" + docSnapshot.documents[i].data()['title'] + "%20";
+        await FirebaseFirestore.instance.collection(collectionName).get();
+    for (var i = 0; i < docSnapshot.docs.length; i++) {
+      if (docSnapshot.docs[i].data()['searchFg'] == true) {
+        urlList += docSnapshot.docs[i].data()['title'] + "%20";
       }
     }
     print('URL:' + urlList);
@@ -193,16 +193,16 @@ class Investlist extends StatelessWidget {
 
   void initSearchFg(String collectionName) async {
     final document =
-        await Firestore.instance.collection(collectionName).getDocuments();
+        await FirebaseFirestore.instance.collection(collectionName).get();
 
     Map<String, bool> data = {
       "searchFg": false,
     };
-    for (var i = 0; i < document.documents.length; i++) {
-      await Firestore.instance
+    for (var i = 0; i < document.docs.length; i++) {
+      await FirebaseFirestore.instance
           .collection(collectionName)
-          .document(document.documents[i].documentID)
-          .updateData(data);
+          .doc(document.docs[i].id)
+          .update(data);
     }
   }
 }

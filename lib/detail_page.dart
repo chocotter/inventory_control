@@ -29,7 +29,6 @@ class DetailPage extends StatelessWidget {
       model.titleText = invest.title;
       model.stockText = invest.stock;
       model.lowText = invest.low;
-
     }
 
     return ChangeNotifierProvider<MainModel>.value(
@@ -60,8 +59,9 @@ class DetailPage extends StatelessWidget {
                 flex: 4,
                 child: Visibility(
                   child: RaisedButton(
-                      // サイズ調整用
-                      ),
+                    onPressed: () {},
+                    // サイズ調整用
+                  ),
                   visible: false,
                 ),
               ),
@@ -75,7 +75,7 @@ class DetailPage extends StatelessWidget {
                     child: Text(isUpdate ? '更新' : '追加'),
                     onPressed: () async {
                       if (isUpdate) {
-                        await model.update(model,invest);
+                        await model.update(model, invest);
                       } else {
                         await model.add(user.email);
                       }
@@ -92,8 +92,9 @@ class DetailPage extends StatelessWidget {
                 flex: 1,
                 child: Visibility(
                   child: RaisedButton(
-                      // サイズ調整用
-                      ),
+                    onPressed: () {},
+                    // サイズ調整用
+                  ),
                   visible: false,
                 ),
               ),
@@ -104,7 +105,7 @@ class DetailPage extends StatelessWidget {
                 child: FloatingActionButton(
                   onPressed: () async {
                     if (isUpdate) {
-                      await model.update(model,invest);
+                      await model.update(model, invest);
                     } else {
                       model.accountText = user.email;
                       await model.add(model.accountText);
@@ -128,19 +129,17 @@ Widget _titleArea(
 ) {
   return Container(
     width: 350,
-    child: Column(
-      children: [
-        TextField(
-          controller: textEditingControllerTitle,
-          decoration: InputDecoration(
-            labelText: "品名",
-          ),
-          onChanged: (text) {
-            model.titleText = text;
-          },
+    child: Column(children: [
+      TextField(
+        controller: textEditingControllerTitle,
+        decoration: InputDecoration(
+          labelText: "品名",
         ),
-      ]
-    ),
+        onChanged: (text) {
+          model.titleText = text;
+        },
+      ),
+    ]),
   );
 }
 
@@ -202,46 +201,6 @@ Widget _lowArea(
   );
 }
 
-Widget _deadLineArea() {
-  return Container(
-      margin: EdgeInsets.all(16.0),
-      child: Row(
-        // 1行目
-        children: <Widget>[
-          Expanded(
-            // 2.1列目
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  // 3.1.1行目
-                  margin: const EdgeInsets.only(bottom: 4.0),
-                  child: Text(
-                    "Neko is So cute..",
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-                  ),
-                ),
-                Container(
-                  // 3.1.2行目
-                  child: Text(
-                    "Osaka, Japan",
-                    style: TextStyle(fontSize: 12.0, color: Colors.grey),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Icon(
-            // 2.2列目
-            Icons.star,
-            color: Colors.red,
-          ),
-          Text('41'), // 2.3列目
-        ],
-      ));
-}
-
 class ChangeForm extends StatefulWidget {
   @override
   _ChangeFormState createState() => _ChangeFormState();
@@ -264,7 +223,7 @@ class _ChangeFormState extends State<ChangeForm> {
         padding: const EdgeInsets.all(50.0),
         child: Column(
           children: <Widget>[
-            Center(child: Text("${_date}")),
+            Center(child: Text(_date.toString())),
             new RaisedButton(
               onPressed: () => _selectDate(context),
               child: new Text('日付選択'),

@@ -15,7 +15,7 @@ class MainModel extends ChangeNotifier {
     snapshots.listen((snapshot) {
       final docs = snapshot.docs;
       final investList = docs.map((doc) => Invest(doc)).toList();
-      investList.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      investList.sort((a, b) => a.createdAt.compareTo(b.createdAt));
       this.investList = investList;
       notifyListeners();
     });
@@ -34,17 +34,17 @@ class MainModel extends ChangeNotifier {
   }
 
   Future delete(Invest invest) async {
-    await Firestore.instance
+    await FirebaseFirestore.instance
         .collection(invest.account)
-        .document(invest.documentID)
+        .doc(invest.documentID)
         .delete();
   }
 
   Future update(MainModel model, Invest invest) async {
-    final document = Firestore.instance
+    final document = FirebaseFirestore.instance
         .collection(invest.account)
-        .document(invest.documentID);
-    await document.updateData({
+        .doc(invest.documentID);
+    await document.update({
       'title': model.titleText,
       'stock': model.stockText,
       'low': model.lowText,
@@ -53,10 +53,10 @@ class MainModel extends ChangeNotifier {
   }
 
   Future updateSearchFg(Invest invest, bool searchFlg) async {
-    final document = Firestore.instance
+    final document = FirebaseFirestore.instance
         .collection(invest.account)
-        .document(invest.documentID);
-    await document.updateData({
+        .doc(invest.documentID);
+    await document.update({
       'searchFg': searchFlg,
     });
   }

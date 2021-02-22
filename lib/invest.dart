@@ -2,13 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Invest {
   Invest(DocumentSnapshot doc) {
-    this.documentID = doc.documentID;
+    this.documentID = doc.id;
     this.account = doc.data()['account'];
     this.title = doc.data()['title'];
     this.stock = doc.data()['stock'];
     this.low = doc.data()['low'];
-    final Timestamp timestamp = doc.data()['createdAt'];
-    this.createdAt = timestamp.toDate();
+    this.createdAt = doc.data()['createdAt'].toDate();
     this.searchFg = doc.data()['searchFg'];
   }
 
