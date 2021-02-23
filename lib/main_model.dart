@@ -5,12 +5,10 @@ import 'package:inventory_control/invest.dart';
 class MainModel extends ChangeNotifier {
   List<Invest> investList = [];
   List<String> selectedItemList = [];
-  String accountText = '';
-  String titleText = '';
-  String stockText = '';
-  String lowText = '';
+  String collectionName = '';
 
   Future<void> getInvestListRealtime(String collectionName) async {
+    this.collectionName = collectionName;
     final snapshots =
         FirebaseFirestore.instance.collection(collectionName).snapshots();
     snapshots.listen((snapshot) {
@@ -22,15 +20,17 @@ class MainModel extends ChangeNotifier {
     });
   }
 
-  Future add(String collectionName) async {
-    final collection = FirebaseFirestore.instance.collection(collectionName);
+  Future add(Invest invest) async {
+    final collection =
+        FirebaseFirestore.instance.collection(this.collectionName);
     await collection.add({
-      'account': accountText,
-      'title': titleText,
-      'stock': stockText,
-      'low': lowText,
+      'account': invest.account,
+      'title': invest.title,
+      'stock': invest.stock,
+      'low': invest.low,
       'createdAt': Timestamp.now(),
     });
+    notifyListeners();
   }
 
   Future delete(Invest invest) async {
@@ -39,18 +39,20 @@ class MainModel extends ChangeNotifier {
         .doc(invest.documentID)
         .delete();
     selectedItemList.remove(invest.title);
+    notifyListeners();
   }
 
-  Future update(MainModel model, Invest invest) async {
+  Future update(Invest invest) async {
     final document = FirebaseFirestore.instance
         .collection(invest.account)
         .doc(invest.documentID);
     await document.update({
-      'title': model.titleText,
-      'stock': model.stockText,
-      'low': model.lowText,
+      'title': invest.title,
+      'stock': invest.stock,
+      'low': invest.low,
       'updateAt': Timestamp.now(),
     });
+    notifyListeners();
   }
 
   Future updateSearchFg(Invest invest, bool searchFlg) async {

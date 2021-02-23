@@ -1,6 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Invest {
+  Invest.fromCollectionName(String collectionName) {
+    this.documentID = "";
+    this.account = collectionName;
+    this.title = "";
+    this.stock = "";
+    this.low = "";
+    this.createdAt = new DateTime.now();
+  }
   Invest(DocumentSnapshot doc) {
     this.documentID = doc.id;
     this.account = doc.data()['account'];
