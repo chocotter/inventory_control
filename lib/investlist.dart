@@ -19,78 +19,84 @@ class Investlist extends StatelessWidget {
           title: Text('在庫管理アプリ'),
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
-          return ListView(
-            children: model.investList
-                .map(
-                  (invest) => ListTile(
-                    leading: Text(invest.title,
-                        style: TextStyle(fontSize: 25),
-                        textAlign: TextAlign.center),
-                    title: Text('在庫：' + invest.stock + '個',
-                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-                    subtitle: Text('最安値：' + invest.low + '円',
-                        style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
-                    // チェックボックス
-                    trailing: Checkbox(
-                      value: invest.searchFlg,
-                      onChanged: (bool value) {
-                        model.updateSearchFlg(invest, value);
-                      },
-                    ),
+          return Container(
+              height: MediaQuery.of(context).size.height * 0.78,
+              decoration: BoxDecoration(
+                  border: Border(bottom: BorderSide(color: Colors.black12))),
+              child: ListView(
+                children: model.investList
+                    .map(
+                      (invest) => ListTile(
+                        leading: Text(invest.title,
+                            style: TextStyle(fontSize: 25),
+                            textAlign: TextAlign.center),
+                        title: Text('在庫：' + invest.stock + '個',
+                            style: TextStyle(
+                                fontSize: 15, color: Colors.blueGrey)),
+                        subtitle: Text('最安値：' + invest.low + '円',
+                            style: TextStyle(
+                                fontSize: 15, color: Colors.blueGrey)),
+                        // チェックボックス
+                        trailing: Checkbox(
+                          value: invest.searchFlg,
+                          onChanged: (bool value) {
+                            model.updateSearchFlg(invest, value);
+                          },
+                        ),
 
-                    // タップ、ロングプレスのアクション
-                    onLongPress: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('削除しますか？'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('OK'),
-                                onPressed: () async {
-                                  Navigator.of(context).pop();
-                                  //削除
-                                  await model.delete(invest);
-                                },
-                              ),
-                            ],
+                        // タップ、ロングプレスのアクション
+                        onLongPress: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('削除しますか？'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('OK'),
+                                    onPressed: () async {
+                                      Navigator.of(context).pop();
+                                      //削除
+                                      await model.delete(invest);
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                    onTap: () async {
-                      await showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('更新しますか？'),
-                            actions: <Widget>[
-                              FlatButton(
-                                child: Text('OK'),
-                                onPressed: () async {
-                                  await Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => DetailPage(
-                                        model,
-                                        invest: invest,
-                                      ),
-                                      fullscreenDialog: true,
-                                    ),
-                                  );
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
+                        onTap: () async {
+                          await showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text('更新しますか？'),
+                                actions: <Widget>[
+                                  FlatButton(
+                                    child: Text('OK'),
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => DetailPage(
+                                            model,
+                                            invest: invest,
+                                          ),
+                                          fullscreenDialog: true,
+                                        ),
+                                      );
+                                      Navigator.of(context).pop();
+                                    },
+                                  ),
+                                ],
+                              );
+                            },
                           );
                         },
-                      );
-                    },
-                  ),
-                )
-                .toList(),
-          );
+                      ),
+                    )
+                    .toList(),
+              ));
         }),
         floatingActionButton:
             Consumer<MainModel>(builder: (context, model, child) {
