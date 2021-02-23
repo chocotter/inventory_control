@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory_control/checklist_model.dart';
 import 'package:inventory_control/detail_page.dart';
 import 'package:inventory_control/main.dart';
 import 'package:inventory_control/main_model.dart';
@@ -14,13 +12,6 @@ class Investlist extends StatelessWidget {
     final UserState userState = Provider.of<UserState>(context);
     var user = userState.user;
 
-    // ユーザ情報が存在する場合、検索フラグを初期化（false)する
-    final bool isInit = user != null;
-
-    if (isInit) {
-      initSearchFg(user.email);
-    }
-
     return ChangeNotifierProvider<MainModel>(
       create: (_) => MainModel()..getInvestListRealtime(user.email),
       child: Scaffold(
@@ -28,9 +19,8 @@ class Investlist extends StatelessWidget {
           title: Text('在庫管理アプリ'),
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
-          final investList = model.investList;
           return ListView(
-            children: investList
+            children: model.investList
                 .map(
                   (invest) => ListTile(
                     leading: Text(invest.title,
@@ -41,9 +31,11 @@ class Investlist extends StatelessWidget {
                     subtitle: Text('最安値：' + invest.low + '円',
                         style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
                     // チェックボックス
-                    trailing: CheckboxListTileForm(
-                      model,
-                      invest,
+                    trailing: Checkbox(
+                      value: invest.searchFlg,
+                      onChanged: (bool value) {
+                        model.updateSearchFlg(invest, value);
+                      },
                     ),
 
                     // タップ、ロングプレスのアクション
@@ -57,7 +49,7 @@ class Investlist extends StatelessWidget {
                               FlatButton(
                                 child: Text('OK'),
                                 onPressed: () async {
-                                  await Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
                                   //削除
                                   await model.delete(invest);
                                 },
@@ -87,7 +79,7 @@ class Investlist extends StatelessWidget {
                                       fullscreenDialog: true,
                                     ),
                                   );
-                                  await Navigator.of(context).pop();
+                                  Navigator.of(context).pop();
                                 },
                               ),
                             ],
@@ -110,8 +102,9 @@ class Investlist extends StatelessWidget {
                 flex: 4,
                 child: Visibility(
                   child: RaisedButton(
-                      // サイズ調整用
-                      ),
+                    onPressed: () {},
+                    // サイズ調整用
+                  ),
                   visible: false,
                 ),
               ),
@@ -126,7 +119,7 @@ class Investlist extends StatelessWidget {
                     textColor: Colors.white,
                     shape: const StadiumBorder(),
                     onPressed: () async {
-                      await _launchUrl(user.email, model);
+                      _launchUrl(user.email, model);
                     },
                   ),
                 ),
@@ -137,8 +130,9 @@ class Investlist extends StatelessWidget {
                 flex: 1,
                 child: Visibility(
                   child: RaisedButton(
-                      // サイズ調整用
-                      ),
+                    onPressed: () {},
+                    // サイズ調整用
+                  ),
                   visible: false,
                 ),
               ),
@@ -167,42 +161,19 @@ class Investlist extends StatelessWidget {
   }
 
   void _launchUrl(String email, MainModel model) async {
-    String url;
-    url = await selectSearch(email);
+    String url = "https://www.google.com/search?q=レシピ%20";
+    List<String> args = [];
+    for (var invest in model.investList) {
+      if (invest.searchFlg) {
+        args.add(invest.title);
+      }
+    }
+    url += args.join(' ');
 
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       throw 'Could not Launch $url';
-    }
-  }
-
-  Future<String> selectSearch(String collectionName) async {
-    String urlList = "https://www.google.com/search?q=レシピ%20";
-    QuerySnapshot docSnapshot =
-        await Firestore.instance.collection(collectionName).getDocuments();
-    for (var i = 0; i < docSnapshot.documents.length; i++) {
-      if (docSnapshot.documents[i].data()['searchFg'] == true) {
-        urlList =
-            "${urlList}" + docSnapshot.documents[i].data()['title'] + "%20";
-      }
-    }
-    print('URL:' + urlList);
-    return urlList;
-  }
-
-  void initSearchFg(String collectionName) async {
-    final document =
-        await Firestore.instance.collection(collectionName).getDocuments();
-
-    Map<String, bool> data = {
-      "searchFg": false,
-    };
-    for (var i = 0; i < document.documents.length; i++) {
-      await Firestore.instance
-          .collection(collectionName)
-          .document(document.documents[i].documentID)
-          .updateData(data);
     }
   }
 }

@@ -1,15 +1,23 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Invest {
+  Invest.fromCollectionName(String collectionName) {
+    this.documentID = "";
+    this.account = collectionName;
+    this.title = "";
+    this.stock = "";
+    this.low = "";
+    this.createdAt = new DateTime.now();
+    this.searchFlg = false;
+  }
   Invest(DocumentSnapshot doc) {
-    this.documentID = doc.documentID;
+    this.documentID = doc.id;
     this.account = doc.data()['account'];
     this.title = doc.data()['title'];
     this.stock = doc.data()['stock'];
     this.low = doc.data()['low'];
-    final Timestamp timestamp = doc.data()['createdAt'];
-    this.createdAt = timestamp.toDate();
-    this.searchFg = doc.data()['searchFg'];
+    this.createdAt = doc.data()['createdAt'].toDate();
+    this.searchFlg = false;
   }
 
   String account; //アカウント
@@ -18,5 +26,5 @@ class Invest {
   String low; //最安値
   DateTime createdAt; // データ作成日
   String documentID;
-  bool searchFg;
+  bool searchFlg; // Does not update to firestore.
 }
