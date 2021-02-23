@@ -65,11 +65,7 @@ class DetailPage extends StatelessWidget {
                   child: RaisedButton(
                     child: Text(isUpdate ? '更新' : '追加'),
                     onPressed: () async {
-                      if (isUpdate) {
-                        await model.update(invest);
-                      } else {
-                        await model.add(invest);
-                      }
+                      await model.upsert(invest, isUpdate);
                       Navigator.pop(context);
                     },
                   ),
@@ -96,11 +92,7 @@ class DetailPage extends StatelessWidget {
                 flex: 2,
                 child: FloatingActionButton(
                   onPressed: () async {
-                    if (isUpdate) {
-                      await model.update(invest);
-                    } else {
-                      await model.add(invest);
-                    }
+                    await model.upsert(invest, isUpdate);
                     Navigator.pop(context);
                   },
                   child: isUpdate ? Icon(Icons.update) : Icon(Icons.edit),

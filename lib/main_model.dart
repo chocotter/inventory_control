@@ -20,17 +20,25 @@ class MainModel extends ChangeNotifier {
     });
   }
 
-  Future add(Invest invest) async {
-    final collection =
-        FirebaseFirestore.instance.collection(this.collectionName);
-    await collection.add({
-      'account': invest.account,
-      'title': invest.title,
-      'stock': invest.stock,
-      'low': invest.low,
-      'createdAt': Timestamp.now(),
-    });
-    notifyListeners();
+  Future upsert(Invest invest, bool isUpdate) async {
+    final collection = FirebaseFirestore.instance.collection(invest.account);
+    if (isUpdate) {
+      await collection.doc(invest.documentID).update({
+        'title': invest.title,
+        'stock': invest.stock,
+        'low': invest.low,
+        'updateAt': Timestamp.now(),
+      });
+    } else {
+      await collection.add({
+        'account': invest.account,
+        'title': invest.title,
+        'stock': invest.stock,
+        'low': invest.low,
+        'createdAt': Timestamp.now(),
+      });
+      notifyListeners();
+    }
   }
 
   Future delete(Invest invest) async {
@@ -39,19 +47,6 @@ class MainModel extends ChangeNotifier {
         .doc(invest.documentID)
         .delete();
     selectedItemList.remove(invest.title);
-    notifyListeners();
-  }
-
-  Future update(Invest invest) async {
-    final document = FirebaseFirestore.instance
-        .collection(invest.account)
-        .doc(invest.documentID);
-    await document.update({
-      'title': invest.title,
-      'stock': invest.stock,
-      'low': invest.low,
-      'updateAt': Timestamp.now(),
-    });
     notifyListeners();
   }
 
