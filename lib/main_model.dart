@@ -4,7 +4,6 @@ import 'package:inventory_control/invest.dart';
 
 class MainModel extends ChangeNotifier {
   List<Invest> investList = [];
-  List<String> selectedItemList = [];
   String collectionName = '';
 
   Future<void> getInvestListRealtime(String collectionName) async {
@@ -46,15 +45,16 @@ class MainModel extends ChangeNotifier {
         .collection(invest.account)
         .doc(invest.documentID)
         .delete();
-    selectedItemList.remove(invest.title);
     notifyListeners();
   }
 
-  Future updateSearchFg(Invest invest, bool searchFlg) async {
-    if (searchFlg) {
-      selectedItemList.add(invest.title);
-    } else {
-      selectedItemList.remove(invest.title);
+  Future updateSearchFlg(Invest invest, bool searchFlg) async {
+    var elem = this
+        .investList
+        .firstWhere((element) => element == invest, orElse: () => null);
+    if (elem != null) {
+      elem.searchFlg = searchFlg;
+      notifyListeners();
     }
   }
 }

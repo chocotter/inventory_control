@@ -1,6 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:inventory_control/checklist_model.dart';
 import 'package:inventory_control/detail_page.dart';
 import 'package:inventory_control/main.dart';
 import 'package:inventory_control/main_model.dart';
@@ -13,13 +11,6 @@ class Investlist extends StatelessWidget {
     // ユーザー情報を受け取る
     final UserState userState = Provider.of<UserState>(context);
     var user = userState.user;
-
-    // ユーザ情報が存在する場合、検索フラグを初期化（false)する
-    final bool isInit = user != null;
-
-    if (isInit) {
-      initSearchFg(user.email);
-    }
 
     return ChangeNotifierProvider<MainModel>(
       create: (_) => MainModel()..getInvestListRealtime(user.email),
@@ -40,9 +31,11 @@ class Investlist extends StatelessWidget {
                     subtitle: Text('最安値：' + invest.low + '円',
                         style: TextStyle(fontSize: 15, color: Colors.blueGrey)),
                     // チェックボックス
-                    trailing: CheckboxListTileForm(
-                      model,
-                      invest,
+                    trailing: Checkbox(
+                      value: invest.searchFlg,
+                      onChanged: (bool value) {
+                        model.updateSearchFlg(invest, value);
+                      },
                     ),
 
                     // タップ、ロングプレスのアクション
@@ -168,41 +161,19 @@ class Investlist extends StatelessWidget {
   }
 
   void _launchUrl(String email, MainModel model) async {
-    String url;
-    url = await selectSearch(email);
+    String url = "https://www.google.com/search?q=レシピ%20";
+    List<String> args = [];
+    for (var invest in model.investList) {
+      if (invest.searchFlg) {
+        args.add(invest.title);
+      }
+    }
+    url += args.join(' ');
 
     if (await canLaunch(url)) {
       await launch(url);
     } else {
       throw 'Could not Launch $url';
-    }
-  }
-
-  Future<String> selectSearch(String collectionName) async {
-    String urlList = "https://www.google.com/search?q=レシピ%20";
-    QuerySnapshot docSnapshot =
-        await FirebaseFirestore.instance.collection(collectionName).get();
-    for (var i = 0; i < docSnapshot.docs.length; i++) {
-      if (docSnapshot.docs[i].data()['searchFg'] == true) {
-        urlList += docSnapshot.docs[i].data()['title'] + "%20";
-      }
-    }
-    print('URL:' + urlList);
-    return urlList;
-  }
-
-  void initSearchFg(String collectionName) async {
-    final document =
-        await FirebaseFirestore.instance.collection(collectionName).get();
-
-    Map<String, bool> data = {
-      "searchFg": false,
-    };
-    for (var i = 0; i < document.docs.length; i++) {
-      await FirebaseFirestore.instance
-          .collection(collectionName)
-          .doc(document.docs[i].id)
-          .update(data);
     }
   }
 }
