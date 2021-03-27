@@ -7,7 +7,7 @@
          FlutterApplication and put your custom class here. -->
     <application
         android:name="io.flutter.app.FlutterApplication"
-        android:label="inventory_control"
+        android:label="在庫管理アプリ(Chocotter)"
         android:icon="@mipmap/ic_launcher">
         <activity
             android:name=".MainActivity"

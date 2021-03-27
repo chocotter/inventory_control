@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:inventory_control/detail_page.dart';
 import 'package:inventory_control/main.dart';
@@ -9,6 +10,7 @@ class Investlist extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // ユーザー情報を受け取る
+
     final UserState userState = Provider.of<UserState>(context);
     var user = userState.user;
 
@@ -17,6 +19,23 @@ class Investlist extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text('在庫管理アプリ'),
+          actions: <Widget>[
+            IconButton(
+              icon: Icon(Icons.logout),
+              onPressed: () async {
+                // ログアウト処理
+                // 内部で保持しているセッション情報が初期化される
+                // （現時点ではログアウト時はこの処理を呼び出せばOKと、思うぐらいで大丈夫です）
+                await FirebaseAuth.instance.signOut();
+                // ログイン画面に遷移＋チャット画面を破棄
+                await Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (context) {
+                    return LoginPage();
+                  }),
+                );
+              },
+            ),
+          ],
         ),
         body: Consumer<MainModel>(builder: (context, model, child) {
           return Container(
