@@ -10,6 +10,7 @@ class Invest {
     this.createdAt = new DateTime.now();
     this.searchFlg = false;
   }
+
   Invest(DocumentSnapshot doc) {
     this.documentID = doc.id;
     this.account = doc.data()['account'];

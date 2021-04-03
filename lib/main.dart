@@ -1,6 +1,6 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:inventory_control/investlist.dart';
 import 'package:provider/provider.dart';
 
@@ -11,19 +11,18 @@ Future<void> main() async {
   runApp(MyApp());
 }
 
-// 更新可能なデータ
 class UserState extends ChangeNotifier {
   var user;
 
-  void setUser(var newUser) {
-    user = newUser;
+  void setUser(var currentUser) {
+    user = currentUser;
     notifyListeners();
   }
 }
 
 class MyApp extends StatelessWidget {
-  // ユーザーの情報を管理するデータ
   final UserState userState = UserState();
+  final currentUser = FirebaseAuth.instance.currentUser;
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +37,50 @@ class MyApp extends StatelessWidget {
           primarySwatch: Colors.blue,
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
-        home: LoginPage(),
+        initialRoute: '/',
+        routes: <String, WidgetBuilder>{
+          '/LoginPage': (_) => new LoginPage(),
+          '/Investlist': (_) => new Investlist(),
+        },
+        home: LoginCheck(),
+      ),
+    );
+  }
+}
+
+class LoginCheck extends StatefulWidget {
+  LoginCheck({Key key}) : super(key: key);
+
+  @override
+  _LoginCheckState createState() => _LoginCheckState();
+}
+
+class _LoginCheckState extends State<LoginCheck> {
+  //ログイン状態のチェック(非同期で行う)
+  void checkUser() async {
+    final currentUser = await FirebaseAuth.instance.currentUser;
+    final userState = Provider.of<UserState>(context, listen: false);
+    if (currentUser == null) {
+      Navigator.pushReplacementNamed(context, "/LoginPage");
+    } else {
+      userState.setUser(currentUser);
+      Navigator.pushReplacementNamed(context, "/Investlist");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    checkUser();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Container(
+          child: Text("Loading..."),
+        ),
       ),
     );
   }
@@ -109,11 +151,8 @@ class _LoginPageState extends State<LoginPage> {
                         password: password,
                       );
                       var user = result.user;
-                      // ユーザー情報を更新
                       userState.setUser(user);
 
-                      // ユーザー登録に成功した場合
-                      // チャット画面に遷移＋ログイン画面を破棄
                       await Navigator.of(context).pushReplacement(
                         MaterialPageRoute(builder: (context) {
                           return Investlist();

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 class DetailPageField extends StatelessWidget {
   final String label;
+
   DetailPageField(this.label);
 
   @override
